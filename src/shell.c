@@ -16,9 +16,9 @@ typedef struct {
 static int ezfork_parentcb_wait (pid_t cpid, void *unused) {
 	pid_t wpid;
 	int status;
-	
+
 	/*puts ("ezfork_parentcb_wait ()");*/
-	
+
 	do wpid = waitpid (cpid, &status, WUNTRACED);
 	while (! WIFEXITED (status) && ! WIFSIGNALED (status));
 	if (status == -1) return -1;
@@ -36,17 +36,17 @@ static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
 	pid_t wpid;
 	int status;
 	parentcb_t *cb = (parentcb_t *) args;
-	
+
 	/*puts ("ezfork_parentcb_wait2 ()");*/
-	
+
 	if (cb->cb (cb->arg) != 0) {
 		/* TODO cleanup child */
 		/*puts ("ezfork_parent_cb_wait2 error");*/
 	   return -2;
    }
-   
+
    /*puts ("ezfork_parentcb_wait2 waiting");*/
-	
+
 	do wpid = waitpid (cpid, &status, WUNTRACED);
 	while (! WIFEXITED (status) && ! WIFSIGNALED (status));
 	if (status == -1) {
@@ -61,9 +61,9 @@ int fork_and_wait2 (
 	int (*childcb)  (void *), void *childcb_args,
 	int (*parentcb) (void *), void *parentcb_args) {
 	parentcb_t cb;
-	
+
 	/*puts ("fork_and_wait2 ()");*/
-	
+
 	cb.cb = parentcb;
 	cb.arg = parentcb_args;
 	if (ezfork (
@@ -145,10 +145,10 @@ static int parentcb (pid_t cpid, void *cbargs) {
 	bool last = args->last;
 	fd_t rd = args->rd;
 	args->cpid = cpid;
-	
+
 	/*puts ("parentcb ()");
 	printf ("input:%d\nrd:%d\nwr:%d\n", input, rd, wr);*/
-	
+
 	close (input);
 	close (wr);
 	if (last) close (rd);
@@ -203,27 +203,27 @@ typedef struct {
 static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 	childcommon_t cargs;
 	parentcb2_t pargs;
-	
+
 	fd_t pipettes[2];
-	
+
 	/* TODO */
 	(void) pipe (pipettes);
-	
+
 	cargs.first = first;
 	cargs.last = last;
 	cargs.input = *input;
 	cargs.rd = pipettes[0];
 	/* */ cargs.wr = pipettes[1];
 	cargs.cmd = cmd;
-	
+
 	pargs.input = *input;
 	pargs.wr = pipettes[1];
 	pargs.rd = pipettes[0];
 	pargs.last = last;
-	
+
 	*input = pipettes[0];
 	/*puts ("command ()");*/
-	
+
 	if (ezfork (childcommon, &cargs, parentcb, &pargs) != 0) {
 		/*puts ("command failed");*/
 		return -1;
@@ -238,7 +238,7 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 	}
 	puts ("command success");
 	*/
-	
+
 	return 0;
 }
 
@@ -249,9 +249,9 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 	fd_t input = STDIN_FILENO;
 	bool first = true;
 	size_t i;
-	
+
 	/*printf ("ncmd:%d\n", (int) ncmd);*/
-	
+
 	for (i = 0; i != ncmd - 1; i++) {
 		/*printf ("1cmd:%d\n", (int) i);*/
 		if (command (cmds + i, &input, first, false) != 0)
@@ -302,7 +302,7 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 	puts ("bb");*/
 	/*printf ("exec_piplinecb: %s\n", argv[0]);*/
 	/*fflush (stdout);*/
-	
+
 	/*cb ();*/
 	if (first && ! last && input == STDIN_FILENO) /* first command */
 		dup2 (wr, STDOUT_FILENO);
@@ -311,7 +311,7 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 		dup2 (wr, STDOUT_FILENO);
 	} else /* last command */
 		dup2 (input, STDIN_FILENO);
-		
+
 	execvp (argv[0], argv);
 	return -1;
 	/*return closure->cb (closure->arg);*/
@@ -333,5 +333,6 @@ int exec_pipeline (char *const *const *argvs, size_t nargv) {
 		return -1;
 	}
 	/*puts ("exec_pipeline success");*/
+	free (cmds);
 	return 0;
 }
