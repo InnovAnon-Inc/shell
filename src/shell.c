@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include <ezfork.h>
+#include <restart.h>
 
 #include "shell.h"
 
@@ -19,9 +20,11 @@ static int ezfork_parentcb_wait (pid_t cpid, void *unused) {
 
 	/*puts ("ezfork_parentcb_wait ()");*/
 
-	do wpid = waitpid (cpid, &status, WUNTRACED);
-	while (! WIFEXITED (status) && ! WIFSIGNALED (status));
-	if (status == -1) return -1;
+	do {
+		wpid = r_waitpid (cpid, &status, WUNTRACED);
+		if (wpid == -1) return -1;
+	} while (! WIFEXITED (status) && ! WIFSIGNALED (status));
+	if (status == -1) return -2;
 	return 0;
 }
 
@@ -47,11 +50,13 @@ static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
 
    /*puts ("ezfork_parentcb_wait2 waiting");*/
 
-	do wpid = waitpid (cpid, &status, WUNTRACED);
-	while (! WIFEXITED (status) && ! WIFSIGNALED (status));
+	do {
+		wpid = r_waitpid (cpid, &status, WUNTRACED);
+		if (wpid == -1) return -2;
+	} while (! WIFEXITED (status) && ! WIFSIGNALED (status));
 	if (status == -1) {
 		/*puts ("ezfork_parentcb_wait2 child failed");*/
-		return -1;
+		return -2;
 	}
 	/*puts ("ezfork_parentcb_wait2 success");*/
 	return 0;
@@ -149,9 +154,18 @@ static int parentcb (pid_t cpid, void *cbargs) {
 	/*puts ("parentcb ()");
 	printf ("input:%d\nrd:%d\nwr:%d\n", input, rd, wr);*/
 
-	close (input);
-	close (wr);
-	if (last) close (rd);
+	if (r_close (input) != 0) {
+		r_close (wr);
+		if (last) r_close (rd);
+		return -1;
+	}
+	if (r_close (wr) != 0) {
+		if (last) r_close (rd);
+		return -2;
+	}
+	if (last)
+		if (r_close (rd) != 0)
+			return -3;
 	/*return rd;*/
 	return 0;
 }
@@ -207,7 +221,8 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 	fd_t pipettes[2];
 
 	/* TODO */
-	(void) pipe (pipettes);
+	if (pipe (pipettes) != 0)
+		return -1;
 
 	cargs.first = first;
 	cargs.last = last;
@@ -226,7 +241,9 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 
 	if (ezfork (childcommon, &cargs, parentcb, &pargs) != 0) {
 		/*puts ("command failed");*/
-		return -1;
+		r_close (pipettes[0]);
+		r_close (pipettes[1]);
+		return -2;
 	}
 	cmd->cpid = pargs.cpid;
 	/*
@@ -265,11 +282,13 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 		pid_t cpid = cmds[i].cpid;
 		pid_t wpid;
 		int status;
-		do wpid = waitpid (cpid, &status, WUNTRACED);
-		while (! WIFEXITED (status) && ! WIFSIGNALED (status));
+		do {
+			wpid = r_waitpid (cpid, &status, WUNTRACED);
+			if (wpid == -1) return -3;
+		} while (! WIFEXITED (status) && ! WIFSIGNALED (status));
 		if (status == -1) {
 			/*puts ("ezfork_parentcb_wait2 child failed");*/
-			return -1;
+			return -4;
 		}
 	}
 	return 0;
@@ -305,15 +324,19 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 
 	/*cb ();*/
 	if (first && ! last && input == STDIN_FILENO) /* first command */
-		dup2 (wr, STDOUT_FILENO);
+		if (r_dup2 (wr, STDOUT_FILENO) != 0)
+			return -1;
 	else if (! first && ! last && input != STDIN_FILENO) { /* middle command */
-		dup2 (input, STDIN_FILENO);
-		dup2 (wr, STDOUT_FILENO);
+		if (r_dup2 (input, STDIN_FILENO) != 0)
+			return -2;
+		if (r_dup2 (wr, STDOUT_FILENO) != 0)
+			return -3;
 	} else /* last command */
-		dup2 (input, STDIN_FILENO);
+		if (r_dup2 (input, STDIN_FILENO) != 0)
+			return -4;
 
-	execvp (argv[0], argv);
-	return -1;
+	execvp (argv[0], argv); /* returns -1 */
+	return -5;
 	/*return closure->cb (closure->arg);*/
 }
 

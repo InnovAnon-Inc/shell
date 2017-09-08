@@ -12,3 +12,4 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_OUTPUT
 
 AC_CHECK_LIB([ezfork],[ezfork])
+AC_CHECK_LIB([restart],[r_waitpid,r_close,r_dup2])
