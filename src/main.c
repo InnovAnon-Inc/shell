@@ -41,6 +41,6 @@ int main (void) {
    /*if (fork_and_wait2 (puts2, "Hello", puts2, "World") != 0) return -2;*/
    /*puts ("main ()");*/
 
-   if (exec_pipeline ((char *const *const []) argvs, nargv) != 0) return EXIT_FAILURE;
+   if (exec_pipeline ((char *const *const *) argvs, nargv) != 0) return EXIT_FAILURE;
    return EXIT_SUCCESS;
 }
