@@ -163,9 +163,10 @@ static int parentcb (pid_t cpid, void *cbargs) {
 		if (last) r_close (rd);
 		return -2;
 	}
-	if (last)
+	if (last) {
 		if (r_close (rd) != 0)
 			return -3;
+	}
 	/*return rd;*/
 	return 0;
 }
@@ -323,17 +324,18 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 	/*fflush (stdout);*/
 
 	/*cb ();*/
-	if (first && ! last && input == STDIN_FILENO) /* first command */
+	if (first && ! last && input == STDIN_FILENO) { /* first command */
 		if (r_dup2 (wr, STDOUT_FILENO) != 0)
 			return -1;
-	else if (! first && ! last && input != STDIN_FILENO) { /* middle command */
+	} else if (! first && ! last && input != STDIN_FILENO) { /* middle command */
 		if (r_dup2 (input, STDIN_FILENO) != 0)
 			return -2;
 		if (r_dup2 (wr, STDOUT_FILENO) != 0)
 			return -3;
-	} else /* last command */
+	} else {/* last command */
 		if (r_dup2 (input, STDIN_FILENO) != 0)
 			return -4;
+	}
 
 	execvp (argv[0], argv); /* returns -1 */
 	return -5;
