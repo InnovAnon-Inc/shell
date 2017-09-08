@@ -11,9 +11,9 @@ static int puts2 (const char *const str) {
 
 int main (void) {
    char str0[3];
-   const char str1[5];
-   const char str2[6];
-   const char str3[3];
+   char str1[5];
+   char str2[6];
+   char str3[3];
    char const *arg0[2];
    char const *arg1[3];
    char const *arg2[2];
