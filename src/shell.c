@@ -139,16 +139,16 @@ typedef struct {
 	fd_t input;
 	fd_t wr;
 	fd_t rd;
-	bool last;
 	pid_t cpid;
+	bool last;
 } parentcb2_t;
 
 static int parentcb (pid_t cpid, void *cbargs) {
 	parentcb2_t *args = (parentcb2_t *) cbargs;
 	fd_t input = args->input;
 	fd_t wr = args->wr;
-	bool last = args->last;
 	fd_t rd = args->rd;
+	bool last = args->last;
 	args->cpid = cpid;
 
 	/*puts ("parentcb ()");
@@ -184,19 +184,19 @@ typedef struct {
 
 
 typedef struct {
-	bool first, last;
 	fd_t input, rd, wr;
 	pipeline_t *cmd;
+	bool first, last;
 } childcommon_t;
 
 static int childcommon (void *tmp) {
 	childcommon_t *arg = (childcommon_t *) tmp;
-	bool first = arg->first;
-	bool last = arg->last;
 	fd_t input = arg->input;
 	fd_t rd = arg->rd;
 	fd_t wr = arg->wr;
 	pipeline_t *cmd = arg->cmd;
+	bool first = arg->first;
+	bool last = arg->last;
 	/*puts ("childcommon ()");
 	printf ("input:%d\nrd:%d\nwr:%d\n", input, rd, wr);*/
 	if (cmd->cb (input, rd, wr, first, last, cmd->arg) != 0) {
@@ -295,6 +295,7 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 	return 0;
 }
 
+__attribute__ ((const))
 int ring () {
 	return -2;
 }

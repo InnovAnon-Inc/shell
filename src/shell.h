@@ -26,6 +26,9 @@ typedef struct {
 
 int pipeline (pipeline_t cmds[], size_t ncmd) ;
 
+int ring ()
+__attribute__ ((const)) ;
+
 /* ---------- */
 
 /* fork a process
