@@ -346,7 +346,9 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 int exec_pipeline (char *const *const *argvs, size_t nargv) {
 	pipeline_t *cmds = malloc (nargv * sizeof (pipeline_t)
 	+ nargv * sizeof (exec_pipelinecb_t));
-	exec_pipelinecb_t *tmps = (exec_pipelinecb_t *) (cmds + nargv);
+	exec_pipelinecb_t *tmps;
+	if (cmds == NULL) return -1;
+	tmps = (exec_pipelinecb_t *) (cmds + nargv);
 	size_t i;
 	for (i = 0; i != nargv; i++) {
 		cmds[i].cb = exec_pipelinecb;
@@ -357,7 +359,7 @@ int exec_pipeline (char *const *const *argvs, size_t nargv) {
 	if (pipeline (cmds, nargv) != 0) {
 		/*puts ("exec_pipeline failed");*/
 		free (cmds);
-		return -1;
+		return -2;
 	}
 	/*puts ("exec_pipeline success");*/
 	free (cmds);
