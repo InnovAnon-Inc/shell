@@ -347,9 +347,9 @@ int exec_pipeline (char *const *const *argvs, size_t nargv) {
 	pipeline_t *cmds = malloc (nargv * sizeof (pipeline_t)
 	+ nargv * sizeof (exec_pipelinecb_t));
 	exec_pipelinecb_t *tmps;
+	size_t i;
 	if (cmds == NULL) return -1;
 	tmps = (exec_pipelinecb_t *) (cmds + nargv);
-	size_t i;
 	for (i = 0; i != nargv; i++) {
 		cmds[i].cb = exec_pipelinecb;
 		cmds[i].arg = tmps + i;
