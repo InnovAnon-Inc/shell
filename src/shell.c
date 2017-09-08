@@ -355,6 +355,7 @@ int exec_pipeline (char *const *const *argvs, size_t nargv) {
 	/*puts ("exec_pipeline ()");*/
 	if (pipeline (cmds, nargv) != 0) {
 		/*puts ("exec_pipeline failed");*/
+		free (cmds);
 		return -1;
 	}
 	/*puts ("exec_pipeline success");*/
