@@ -1,6 +1,10 @@
 #ifndef _SHELL_H_
 #define _SHELL_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include <sys/types.h>
 
@@ -48,5 +52,9 @@ int fork_and_wait (int (*cb) (void *), void *cb_args) ;
 int fork_and_wait2 (
 	int (*childcb)  (void *), void *childcb_args,
 	int (*parentcb) (void *), void *parentcb_args) ;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _SHELL_H_ */
