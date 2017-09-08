@@ -14,10 +14,10 @@ int main (void) {
    char str1[5];
    char str2[6];
    char str3[3];
-   char const *arg0[2];
-   char const *arg1[3];
-   char const *arg2[2];
-   char const *const *argvs[3];
+   char *arg0[2];
+   char *arg1[3];
+   char *arg2[2];
+   char *const *argvs[3];
    size_t nargv = 3;
    str0[0] = 'l'; str0[1] = 's'; str0[2] = '\0';
    str1[0] = 'g'; str1[1] = 'r'; str1[2] = 'e'; str1[3] = 'p'; str1[4] = '\0';
