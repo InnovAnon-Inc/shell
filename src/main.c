@@ -15,16 +15,18 @@ int main (void) {
    const char str2[] = "shell";
    const char str3[] = "wc";
    char const *arg0[2];
+   char const *arg1[3];
+   char const *arg2[2];
+   char const *const *argvs[3];
+   size_t nargv = 3;
    arg0[0] = str0;
    arg0[1] = NULL;
-   char const *arg1[3];
    arg1[0] = str1;
    arg1[1] = str2;
    arg1[2] = NULL;
-   char const *arg2[2];
    arg2[0] = str3;
    arg2[0] = NULL;
-   char const *const *argvs[3];
+
    argvs[0] = arg0;
    argvs[1] = arg1;
    argvs[2] = arg2;
@@ -34,7 +36,6 @@ int main (void) {
 	 (char *const []) {"grep", "shell", NULL},
 	 (char *const []) {"wc", NULL}
    };*/
-   size_t nargv = 3;
 
    /*if (fork_and_wait (puts2, "Hello") != 0) return -2;*/
    /*if (fork_and_wait2 (puts2, "Hello", puts2, "World") != 0) return -2;*/
