@@ -20,10 +20,10 @@ int main (void) {
    char *arg2[] = {str3};
    char **argvs[3] = {arg0, arg1, arg2};
    */
-   /*const*/ char /*const*/ * const * const * const argvs = (char *const *[]) {
-	 (char const *[]) {"ls", NULL},
-	 (char const *[]) {"grep", "shell", NULL},
-	 (char const *[]) {"wc", NULL}
+   /*const*/ char /*const*/ * const * const * const argvs = (char *const *const []) {
+	 (char const *const []) {"ls", NULL},
+	 (char const *const []) {"grep", "shell", NULL},
+	 (char const *const []) {"wc", NULL}
    };
    size_t nargv = 3;
 
