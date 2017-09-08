@@ -10,21 +10,20 @@ static int puts2 (const char *const str) {
 }
 
 int main (void) {
-	/*
-   char str0[] = "ls";
-   char str1[] = "grep";
-   char str2[] = "shell";
-   char str3[] = "wc";
-   char *arg0[] = {str0};
-   char *arg1[] = {str1, str2};
-   char *arg2[] = {str3};
-   char **argvs[3] = {arg0, arg1, arg2};
-   */
-   /*const*/ char /*const*/ * const * const * const argvs = (char *const *const []) {
+   const char str0[] = "ls";
+   const char str1[] = "grep";
+   const char str2[] = "shell";
+   const char str3[] = "wc";
+   char *const arg0[] = (char *const []) {str0, NULL};
+   char *const arg1[] = (char *const []) {str1, str2, NULL};
+   char *const arg2[] = (char *const []) {str3, NULL};
+   char *const *const argvs[3] = {arg0, arg1, arg2};
+   /*
+   char *const *const *const argvs = (char *const *const []) {
 	 (char *const []) {"ls", NULL},
 	 (char *const []) {"grep", "shell", NULL},
 	 (char *const []) {"wc", NULL}
-   };
+   };*/
    size_t nargv = 3;
 
    /*if (fork_and_wait (puts2, "Hello") != 0) return -2;*/
