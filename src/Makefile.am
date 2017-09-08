@@ -42,4 +42,5 @@ shell_test_CFLAGS = -Wextra -pedantic -ansi -Werror -Wdouble-promotion \
                    -Wredundant-decls -Wnested-externs -Winline \
                    -Wvector-operation-performance -Wdisabled-optimization \
                    -Wstack-protector -Wunsuffixed-float-constants \
-                   -Winit-self
+                   -Winit-self \
+                   -Wno-pedantic
