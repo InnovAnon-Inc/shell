@@ -26,7 +26,7 @@ typedef struct {
 
 int pipeline (pipeline_t cmds[], size_t ncmd) ;
 
-int ring ()
+int ring (void)
 __attribute__ ((const)) ;
 
 /* ---------- */

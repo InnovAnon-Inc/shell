@@ -296,7 +296,7 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 }
 
 __attribute__ ((const))
-int ring () {
+int ring (void) {
 	return -2;
 }
 
