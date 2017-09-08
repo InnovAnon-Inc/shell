@@ -29,7 +29,7 @@ int main (void) {
    arg1[1] = str2;
    arg1[2] = NULL;
    arg2[0] = str3;
-   arg2[0] = NULL;
+   arg2[1] = NULL;
 
    argvs[0] = arg0;
    argvs[1] = arg1;
