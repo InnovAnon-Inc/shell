@@ -10,15 +10,19 @@ static int puts2 (const char *const str) {
 }
 
 int main (void) {
-   const char str0[] = "ls";
-   const char str1[] = "grep";
-   const char str2[] = "shell";
-   const char str3[] = "wc";
+   char str0[3];
+   const char str1[5];
+   const char str2[6];
+   const char str3[3];
    char const *arg0[2];
    char const *arg1[3];
    char const *arg2[2];
    char const *const *argvs[3];
    size_t nargv = 3;
+   str0[0] = 'l'; str0[1] = 's'; str0[2] = '\0';
+   str1[0] = 'g'; str1[1] = 'r'; str1[2] = 'e'; str1[3] = 'p'; str1[4] = '\0';
+   str2[0] = 's'; str2[1] = 'h'; str2[2] = 'e'; str2[3] = 'l'; str2[4] = 'l'; str2[5] = '\0';
+   str3[0] = 'w'; str3[1] = 'c'; str3[2] = '\0';
    arg0[0] = str0;
    arg0[1] = NULL;
    arg1[0] = str1;
