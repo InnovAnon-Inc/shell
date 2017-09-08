@@ -14,10 +14,20 @@ int main (void) {
    const char str1[] = "grep";
    const char str2[] = "shell";
    const char str3[] = "wc";
-   char const *const arg0[] = (char const *const []) {str0, NULL};
-   char const *const arg1[] = (char const *const []) {str1, str2, NULL};
-   char const *const arg2[] = (char const *const []) {str3, NULL};
-   char const *const *const argvs[3] = (char const *const *const []) {arg0, arg1, arg2};
+   char const *const arg0[2];
+   arg0[0] = str0;
+   arg0[1] = NULL;
+   char const *const arg1[3];
+   arg1[0] = str1;
+   arg1[1] = str2;
+   arg1[2] = NULL;
+   char const *const arg2[2];
+   arg2[0] = str3;
+   arg2[0] = NULL;
+   char const *const *const argvs[3];
+   argvs[0] = arg0;
+   argvs[1] = arg1;
+   argvs[2] = arg2;
    /*
    char *const *const *const argvs = (char *const *const []) {
 	 (char *const []) {"ls", NULL},
