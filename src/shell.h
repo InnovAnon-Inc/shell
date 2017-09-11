@@ -23,11 +23,14 @@ __attribute__ ((nonnull (1), nothrow, warn_unused_result)) ;
 typedef __attribute__ ((warn_unused_result))
 int (*pipelinecb_t) (fd_t, fd_t, fd_t, bool, bool, void *) ;
 
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
 	pipelinecb_t cb;
 	void *arg;
 	pid_t cpid;
 } pipeline_t;
+	#pragma GCC diagnostic pop
 
 int pipeline (pipeline_t cmds[], size_t ncmd)
 __attribute__ ((nonnull (1), warn_unused_result)) ;

@@ -145,7 +145,8 @@ int background (stdcb_t cb, void *args) {
 /* ------------------------------------------ */
 
 
-
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
 	fd_t input;
 	fd_t wr;
@@ -153,6 +154,7 @@ typedef struct {
 	pid_t cpid;
 	bool last;
 } parentcb2_t;
+	#pragma GCC diagnostic pop
 
 __attribute__ ((nonnull (2), nothrow, warn_unused_result))
 static int parentcb (pid_t cpid, void *cbargs) {
@@ -204,11 +206,14 @@ typedef struct {
 
 
 
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
-	fd_t input, rd, wr;
 	pipeline_t *restrict cmd;
+	fd_t input, rd, wr;
 	bool first, last;
 } childcommon_t;
+	#pragma GCC diagnostic pop
 
 __attribute__ ((nonnull (1), warn_unused_result))
 static int childcommon (void *tmp) {
@@ -378,7 +383,10 @@ int exec_pipeline (char *const *const argvs[], size_t nargv) {
 	exec_pipelinecb_t *restrict tmps;
 	size_t i;
 	error_check (cmds == NULL) return -1;
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic error "-Wstrict-aliasing"
 	tmps = (exec_pipelinecb_t *restrict) (cmds + nargv);
+	#pragma GCC diagnostic pop
 	for (i = 0; i != nargv; i++) {
 		cmds[i].cb = exec_pipelinecb;
 		cmds[i].arg = tmps + i;
