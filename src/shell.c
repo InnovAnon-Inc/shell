@@ -173,7 +173,11 @@ static int parentcb (pid_t cpid, void *cbargs) {
 		return -1;
 	}
 	error_check (r_close (wr) != 0) {
-		if (last) swallow (r_close (rd), -Wunused-result);
+		/*if (last) swallow (r_close (rd), -Wunused-result);*/
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wunused-result"
+		if (last) r_close (rd);
+	#pragma GCC diagnostic pop
 		return -2;
 	}
 	if (last) {
