@@ -229,7 +229,7 @@ typedef struct {
 
 #define swallow(E,D) do { \
 	_Pragma ("GCC diagnostic push") \
-	DO_PRAGMA (GCC diagnostic ignored #D) \
+	_Pragma ("GCC diagnostic ignored" #D) \
 	(void) (E); \
 	_Pragma ("GCC diagnostic pop") \
 } while (false) ;
