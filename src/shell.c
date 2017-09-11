@@ -225,10 +225,10 @@ typedef struct {
 } command_t;*/
 
 #define swallow(E,D) do { \
-	#pragma GCC diagnostic push \
-	#pragma GCC diagnostic ignored D \
+	_Pragma diagnostic push \
+	_Pragma diagnostic ignored D \
 	(void) (E); \
-	#pragma GCC diagnostic pop \
+	_Pragma diagnostic pop \
 } while (false) ;
 
 __attribute__ ((nonnull (1), warn_unused_result))
