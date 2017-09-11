@@ -228,10 +228,10 @@ typedef struct {
 #define TODO(x) DO_PRAGMA(message ("TODO - " #x))
 
 #define swallow(E,D) do { \
-	DO_PRAGMA (diagnostic ("push")) \
-	DO_PRAGMA (diagnostic ("ignored" #D)) \
+	DO_PRAGMA (GCC diagnostic ("push")) \
+	DO_PRAGMA (GCC diagnostic ("ignored" #D)) \
 	(void) (E); \
-	DO_PRAGMA (diagnostic ("pop")) \
+	DO_PRAGMA (GCC diagnostic ("pop")) \
 } while (false) ;
 
 __attribute__ ((nonnull (1), warn_unused_result))
@@ -262,11 +262,8 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 
 	error_check (ezfork (childcommon, &cargs, parentcb, &pargs) != 0) {
 		/*puts ("command failed");*/
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wunused-result"
 		swallow (r_close (pipettes[0]), -Wunused-result);
 		swallow (r_close (pipettes[1]), -Wunused-result);
-	#pragma GCC diagnostic pop
 		return -2;
 	}
 	cmd->cpid = pargs.cpid;
