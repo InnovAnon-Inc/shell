@@ -9,3 +9,5 @@ shell_test_SOURCES = main.c
 shell_test_LDFLAGS = -lezfork -lrestart
 shell_test_LDADD = libshell.la
 #shell_test_CFLAGS =
+
+AM_CPPFLAGS = -D__STDC_INT64__
