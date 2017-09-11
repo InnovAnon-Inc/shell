@@ -12,7 +12,7 @@ typedef struct {
 	void *arg;
 } closure_t;
 
-__attribute__ ((nothrow, warn_unused_result))
+__attribute__ ((leaf, nothrow, sentinel (2), warn_unused_result))
 static int ezfork_parentcb_wait (pid_t cpid, void *unused) {
 	pid_t wpid;
 	int status;
