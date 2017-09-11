@@ -228,10 +228,10 @@ typedef struct {
 #define TODO(x) DO_PRAGMA(message ("TODO - " #x))
 
 #define swallow(E,D) do { \
-	DO_PRAGMA (GCC diagnostic ("push")) \
-	DO_PRAGMA (GCC diagnostic ("ignored" #D)) \
+	_Pragma ("GCC diagnostic push") \
+	DO_PRAGMA (GCC diagnostic ignored #D) \
 	(void) (E); \
-	DO_PRAGMA (GCC diagnostic ("pop")) \
+	_Pragma ("GCC diagnostic pop") \
 } while (false) ;
 
 __attribute__ ((nonnull (1), warn_unused_result))
