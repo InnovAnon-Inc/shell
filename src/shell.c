@@ -7,21 +7,6 @@
 
 #include "shell.h"
 
-
-
-
-#define DO_PRAGMA(x) _Pragma (#x)
-#define TODO(x) DO_PRAGMA(message ("TODO - " #x))
-
-#define swallow(E,D) do { \
-	_Pragma ("GCC diagnostic push") \
-	DO_PRAGMA ("GCC diagnostic ignored" #D) \
-	(void) (E); \
-	_Pragma ("GCC diagnostic pop") \
-} while (false) ;
-
-
-
 typedef struct {
 	int (*cb) (void *);
 	void *arg;
@@ -178,8 +163,13 @@ static int parentcb (pid_t cpid, void *cbargs) {
 	printf ("input:%d\nrd:%d\nwr:%d\n", input, rd, wr);*/
 
 	error_check (r_close (input) != 0) {
-		swallow (r_close (wr), -Wunused-result);
-		if (last) swallow (r_close (rd), -Wunused-result);
+		/*swallow (r_close (wr), -Wunused-result);
+		if (last) swallow (r_close (rd), -Wunused-result);*/
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wunused-result"
+		r_close (wr);
+		if (last) r_close (rd);
+	#pragma GCC diagnostic pop
 		return -1;
 	}
 	error_check (r_close (wr) != 0) {
