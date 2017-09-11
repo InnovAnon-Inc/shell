@@ -226,7 +226,10 @@ static int childcommon (void *tmp) {
 	bool last = arg->last;
 	/*puts ("childcommon ()");
 	printf ("input:%d\nrd:%d\nwr:%d\n", input, rd, wr);*/
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wtraditional-conversion"
 	error_check (cmd->cb (input, rd, wr, first, last, cmd->arg) != 0) {
+	#pragma GCC diagnostic pop
 		/*puts ("childcommon failed");*/
 		return -1;
 	}
@@ -308,12 +311,18 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 
 	for (i = 0; i != ncmd - 1; i++) {
 		/*printf ("1cmd:%d\n", (int) i);*/
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wtraditional-conversion"
 		error_check (command (cmds + i, &input, first, false) != 0)
+	#pragma GCC diagnostic pop
 			return -1;
 		first = false;
 	}
 	/*printf ("2cmd:%d\n", (int) i);*/
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wtraditional-conversion"
 	error_check (command (cmds + i, &input, first, true) != 0)
+	#pragma GCC diagnostic pop
 		return -2;
 	for (i = 0; i != ncmd; i++) {
 		pid_t cpid = cmds[i].cpid;
