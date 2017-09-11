@@ -228,7 +228,7 @@ typedef struct {
 #define TODO(x) DO_PRAGMA(message ("TODO - " #x))
 
 #define swallow(E,D) do { \
-	_Pragma ("GCC diagnostic push") \
+	_Pragma (GCC diagnostic push) \
 	DO_PRAGMA ("GCC diagnostic ignored" #D) \
 	(void) (E); \
 	_Pragma ("GCC diagnostic pop") \
