@@ -283,7 +283,7 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 	return 0;
 }
 
-TODO (add void * param to cmds' siggy, and void * arg... closure-style)
+TODO (add void * param to cmds siggy, and void * arg... closure-style)
 
 /* nargv is non-zero */
 __attribute__ ((nonnull (1), warn_unused_result))
