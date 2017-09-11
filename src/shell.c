@@ -202,7 +202,7 @@ typedef struct {
 
 typedef struct {
 	fd_t input, rd, wr;
-	pipeline_t *cmd;
+	pipeline_t *restrict cmd;
 	bool first, last;
 } childcommon_t;
 
@@ -212,7 +212,7 @@ static int childcommon (void *tmp) {
 	fd_t input = arg->input;
 	fd_t rd = arg->rd;
 	fd_t wr = arg->wr;
-	pipeline_t *cmd = arg->cmd;
+	pipeline_t *restrict cmd = arg->cmd;
 	bool first = arg->first;
 	bool last = arg->last;
 	/*puts ("childcommon ()");
@@ -365,13 +365,13 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 }
 
 __attribute__ ((nonnull (1), nothrow, warn_unused_result))
-int exec_pipeline (char *const *const *argvs, size_t nargv) {
-	pipeline_t *cmds = malloc (nargv * sizeof (pipeline_t)
+int exec_pipeline (char *const *const *restrict argvs, size_t nargv) {
+	pipeline_t *restrict cmds = malloc (nargv * sizeof (pipeline_t)
 	+ nargv * sizeof (exec_pipelinecb_t));
-	exec_pipelinecb_t *tmps;
+	exec_pipelinecb_t *restrict tmps;
 	size_t i;
 	error_check (cmds == NULL) return -1;
-	tmps = (exec_pipelinecb_t *) (cmds + nargv);
+	tmps = (exec_pipelinecb_t *restrict) (cmds + nargv);
 	for (i = 0; i != nargv; i++) {
 		cmds[i].cb = exec_pipelinecb;
 		cmds[i].arg = tmps + i;
