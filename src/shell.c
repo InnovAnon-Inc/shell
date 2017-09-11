@@ -23,7 +23,7 @@ static int ezfork_parentcb_wait (pid_t cpid, void *unused) {
 		wpid = r_waitpid (cpid, &status, WUNTRACED);
 		error_check (wpid == -1) return -1;
 	} while_check (! WIFEXITED (status) && ! WIFSIGNALED (status));
-	if (status == -1) return -2;
+	error_check (status == -1) return -2;
 	return 0;
 }
 
