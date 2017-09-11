@@ -12,7 +12,7 @@ typedef struct {
 	void *arg;
 } closure_t;
 
-__attribute__ ((leaf, nothrow, sentinel (2), warn_unused_result))
+__attribute__ ((nothrow, warn_unused_result))
 static int ezfork_parentcb_wait (pid_t cpid, void *unused) {
 	pid_t wpid;
 	int status;
@@ -44,7 +44,7 @@ static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
 	/*puts ("ezfork_parentcb_wait2 ()");*/
 
 	error_check (cb->cb (cb->arg) != 0) {
-		/* TODO cleanup child */
+		TODO (cleanup child)
 		/*puts ("ezfork_parent_cb_wait2 error");*/
 	   return -2;
    }
@@ -240,7 +240,6 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 
 	fd_t pipettes[2];
 
-	/* TODO */
 	error_check (pipe (pipettes) != 0)
 		return -1;
 
@@ -284,7 +283,7 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 	return 0;
 }
 
-/* TODO add void * param to cmds' siggy, and void * arg... closure-style */
+TODO (add void * param to cmds' siggy, and void * arg... closure-style)
 
 /* nargv is non-zero */
 __attribute__ ((nonnull (1), warn_unused_result))
