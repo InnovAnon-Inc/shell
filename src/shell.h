@@ -20,8 +20,6 @@ __attribute__ ((nonnull (1), nothrow, warn_unused_result)) ;
 
 /* ring, command, pipeline */
 
-typedef int fd_t;
-
 typedef __attribute__ ((warn_unused_result))
 int (*pipelinecb_t) (fd_t, fd_t, fd_t, bool, bool, void *) ;
 
