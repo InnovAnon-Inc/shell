@@ -224,10 +224,10 @@ typedef struct {
 	closure_t args;
 } command_t;*/
 
-#define swallow(S,D) do { \
+#define swallow(E,D) do { \
 	#pragma GCC diagnostic push \
 	#pragma GCC diagnostic ignored D \
-	S \
+	(void) (E); \
 	#pragma GCC diagnostic pop \
 } while (false) ;
 
