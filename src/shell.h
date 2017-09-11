@@ -5,12 +5,16 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
 #include <sys/types.h>
+
+#include <glitter.h>
 
 /* exec_pipeline, exec_ring */
 
-int exec_pipeline (char *const *const *argvs, size_t nargv) ;
+int exec_pipeline (
+	char *const *const *argvs,
+	size_t nargv)
+__attribute__ ((nonnull (1), nothrow, warn_unused_result)) ;
 
 /* ---------- */
 
@@ -24,37 +28,42 @@ typedef struct {
 	pid_t cpid;
 } pipeline_t;
 
-int pipeline (pipeline_t cmds[], size_t ncmd) ;
+int pipeline (pipeline_t cmds[], size_t ncmd)
+__attribute__ ((nonnull (1), warn_unused_result)) ;
 
 int ring (void)
-__attribute__ ((const)) ;
+__attribute__ ((const, warn_unused_result)) ;
 
 /* ---------- */
 
 /* fork a process
  * child invokes cb (args)
  * parent does nothing, creating a zombie */
-int zombify (int (*cb) (void *), void *args) ;
+int zombify (int (*cb) (void *), void *args)
+__attribute__ ((nonnull (1), warn_unused_result)) ;
 
 /* fork a process, then fork a process
  * grandchild invokes cb (args)
  * child does nothing, but dies, so grandchild is adopted by the init orphanage
  * parent waits for child to die */
-int background (int (*cb) (void *), void *args) ;
+int background (int (*cb) (void *), void *args)
+__attribute__ ((nonnull (1), warn_unused_result)) ;
 
 /* ---------- */
 
 /* fork a process
  * child invokes cb (args)
  * parent waits for child */
-int fork_and_wait (int (*cb) (void *), void *cb_args) ;
+int fork_and_wait (int (*cb) (void *), void *cb_args)
+__attribute__ ((nonnull (1), warn_unused_result)) ;
 
 /* fork a process
  * child invokes childcb (childargs)
  * parent invokes parencb (parenargs), then waits for child */
 int fork_and_wait2 (
 	int (*childcb)  (void *), void *childcb_args,
-	int (*parentcb) (void *), void *parentcb_args) ;
+	int (*parentcb) (void *), void *parentcb_args)
+__attribute__ ((nonnull (1, 3), warn_unused_result)) ;
 
 #ifdef __cplusplus
 }

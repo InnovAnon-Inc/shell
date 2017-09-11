@@ -1,8 +1,6 @@
-#include <stdbool.h>
-
-#include <sys/wait.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 #include <ezfork.h>
 #include <restart.h>
@@ -14,6 +12,7 @@ typedef struct {
 	void *arg;
 } closure_t;
 
+__attribute__ ((nothrow, warn_unused_result))
 static int ezfork_parentcb_wait (pid_t cpid, void *unused) {
 	pid_t wpid;
 	int status;
@@ -22,12 +21,13 @@ static int ezfork_parentcb_wait (pid_t cpid, void *unused) {
 
 	do {
 		wpid = r_waitpid (cpid, &status, WUNTRACED);
-		if (wpid == -1) return -1;
-	} while (! WIFEXITED (status) && ! WIFSIGNALED (status));
+		error_check (wpid == -1) return -1;
+	} while_check (! WIFEXITED (status) && ! WIFSIGNALED (status));
 	if (status == -1) return -2;
 	return 0;
 }
 
+__attribute__ ((nonnull (1), warn_unused_result))
 int fork_and_wait (int (*cb) (void *), void *cb_args) {
 	/*puts ("fork_and_wait ()");*/
 	return ezfork (cb, cb_args, ezfork_parentcb_wait, NULL);
@@ -35,6 +35,7 @@ int fork_and_wait (int (*cb) (void *), void *cb_args) {
 
 typedef closure_t parentcb_t;
 
+__attribute__ ((nonnull (2), nothrow, warn_unused_result))
 static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
 	pid_t wpid;
 	int status;
@@ -42,7 +43,7 @@ static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
 
 	/*puts ("ezfork_parentcb_wait2 ()");*/
 
-	if (cb->cb (cb->arg) != 0) {
+	error_check (cb->cb (cb->arg) != 0) {
 		/* TODO cleanup child */
 		/*puts ("ezfork_parent_cb_wait2 error");*/
 	   return -2;
@@ -52,9 +53,9 @@ static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
 
 	do {
 		wpid = r_waitpid (cpid, &status, WUNTRACED);
-		if (wpid == -1) return -2;
-	} while (! WIFEXITED (status) && ! WIFSIGNALED (status));
-	if (status == -1) {
+		error_check (wpid == -1) return -2;
+	} while_check (! WIFEXITED (status) && ! WIFSIGNALED (status));
+	error_check (status == -1) {
 		/*puts ("ezfork_parentcb_wait2 child failed");*/
 		return -2;
 	}
@@ -62,6 +63,7 @@ static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
 	return 0;
 }
 
+__attribute__ ((nonnull (1, 3), warn_unused_result))
 int fork_and_wait2 (
 	int (*childcb)  (void *), void *childcb_args,
 	int (*parentcb) (void *), void *parentcb_args) {
@@ -71,7 +73,7 @@ int fork_and_wait2 (
 
 	cb.cb = parentcb;
 	cb.arg = parentcb_args;
-	if (ezfork (
+	error_check (ezfork (
 		childcb, childcb_args,
 		ezfork_parentcb_wait2, (void *) &cb) != 0) {
 			/*puts ("fork_and_wait2 error");*/
@@ -81,15 +83,17 @@ int fork_and_wait2 (
 	return 0;
 }
 
+__attribute__ ((const, nothrow, warn_unused_result))
 static int do_nothing (pid_t cpid, void *unused) {
 	/*puts ("do_nothing ()");*/
 	return 0;
 }
 
+__attribute__ ((nonnull (1), warn_unused_result))
 int zombify (int (*childcb)  (void *), void *childcb_args) {
 	/* insert joke about neglecting children */
 	/*puts ("zombify ()");*/
-	if (ezfork (childcb, childcb_args, do_nothing, NULL) != 0) {
+	error_check (ezfork (childcb, childcb_args, do_nothing, NULL) != 0) {
 		/*puts ("zombify error");*/
 		return -1;
 	}
@@ -97,10 +101,11 @@ int zombify (int (*childcb)  (void *), void *childcb_args) {
 	return 0;
 }
 
+__attribute__ ((nonnull (1), warn_unused_result))
 static int zombify_wrapper (void *arg) {
 	closure_t *closure = (closure_t *) arg;
 	/*puts ("zombify_wrapper ()");*/
-	if (zombify (closure->cb, closure->arg) != 0) {
+	error_check (zombify (closure->cb, closure->arg) != 0) {
 		/*puts ("zombify_wrapper error");*/
 		return -1;
 	}
@@ -118,12 +123,14 @@ static int backgroundcb (void *args) {
 	return zombify (tmp->cb, tmp->args);
 }
 */
+
+__attribute__ ((nonnull (1), warn_unused_result))
 int background (int (*cb) (void *), void *args) {
 	closure_t tmp;
 	tmp.cb = cb;
 	tmp.arg = args;
 	/*puts ("background ()");*/
-	if (fork_and_wait (zombify_wrapper, &tmp) != 0) {
+	error_check (fork_and_wait (zombify_wrapper, &tmp) != 0) {
 		/*puts ("background error");*/
 		return -1;
 	}
@@ -143,6 +150,7 @@ typedef struct {
 	bool last;
 } parentcb2_t;
 
+__attribute__ ((nonnull (2), nothrow, warn_unused_result))
 static int parentcb (pid_t cpid, void *cbargs) {
 	parentcb2_t *args = (parentcb2_t *) cbargs;
 	fd_t input = args->input;
@@ -154,17 +162,17 @@ static int parentcb (pid_t cpid, void *cbargs) {
 	/*puts ("parentcb ()");
 	printf ("input:%d\nrd:%d\nwr:%d\n", input, rd, wr);*/
 
-	if (r_close (input) != 0) {
+	error_check (r_close (input) != 0) {
 		r_close (wr);
 		if (last) r_close (rd);
 		return -1;
 	}
-	if (r_close (wr) != 0) {
+	error_check (r_close (wr) != 0) {
 		if (last) r_close (rd);
 		return -2;
 	}
 	if (last) {
-		if (r_close (rd) != 0)
+		error_check (r_close (rd) != 0)
 			return -3;
 	}
 	/*return rd;*/
@@ -189,6 +197,7 @@ typedef struct {
 	bool first, last;
 } childcommon_t;
 
+__attribute__ ((nonnull (1), warn_unused_result))
 static int childcommon (void *tmp) {
 	childcommon_t *arg = (childcommon_t *) tmp;
 	fd_t input = arg->input;
@@ -199,7 +208,7 @@ static int childcommon (void *tmp) {
 	bool last = arg->last;
 	/*puts ("childcommon ()");
 	printf ("input:%d\nrd:%d\nwr:%d\n", input, rd, wr);*/
-	if (cmd->cb (input, rd, wr, first, last, cmd->arg) != 0) {
+	error_check (cmd->cb (input, rd, wr, first, last, cmd->arg) != 0) {
 		/*puts ("childcommon failed");*/
 		return -1;
 	}
@@ -215,6 +224,7 @@ typedef struct {
 	closure_t args;
 } command_t;*/
 
+__attribute__ ((nonnull (1), warn_unused_result))
 static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 	childcommon_t cargs;
 	parentcb2_t pargs;
@@ -240,7 +250,7 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 	*input = pipettes[0];
 	/*puts ("command ()");*/
 
-	if (ezfork (childcommon, &cargs, parentcb, &pargs) != 0) {
+	error_check (ezfork (childcommon, &cargs, parentcb, &pargs) != 0) {
 		/*puts ("command failed");*/
 		r_close (pipettes[0]);
 		r_close (pipettes[1]);
@@ -263,6 +273,7 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 /* TODO add void * param to cmds' siggy, and void * arg... closure-style */
 
 /* nargv is non-zero */
+__attribute__ ((nonnull (1), warn_unused_result))
 int pipeline (pipeline_t cmds[], size_t ncmd) {
 	fd_t input = STDIN_FILENO;
 	bool first = true;
@@ -272,12 +283,12 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 
 	for (i = 0; i != ncmd - 1; i++) {
 		/*printf ("1cmd:%d\n", (int) i);*/
-		if (command (cmds + i, &input, first, false) != 0)
+		error_check (command (cmds + i, &input, first, false) != 0)
 			return -1;
 		first = false;
 	}
 	/*printf ("2cmd:%d\n", (int) i);*/
-	if (command (cmds + i, &input, first, true) != 0)
+	error_check (command (cmds + i, &input, first, true) != 0)
 		return -2;
 	for (i = 0; i != ncmd; i++) {
 		pid_t cpid = cmds[i].cpid;
@@ -285,9 +296,9 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 		int status;
 		do {
 			wpid = r_waitpid (cpid, &status, WUNTRACED);
-			if (wpid == -1) return -3;
-		} while (! WIFEXITED (status) && ! WIFSIGNALED (status));
-		if (status == -1) {
+			error_check (wpid == -1) return -3;
+		} while_check (! WIFEXITED (status) && ! WIFSIGNALED (status));
+		error_check (status == -1) {
 			/*puts ("ezfork_parentcb_wait2 child failed");*/
 			return -4;
 		}
@@ -295,7 +306,7 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 	return 0;
 }
 
-__attribute__ ((const))
+__attribute__ ((const, warn_unused_result))
 int ring (void) {
 	return -2;
 }
@@ -312,6 +323,7 @@ typedef struct {
 	char *const *argv;
 } exec_pipelinecb_t;
 
+__attribute__ ((nonnull (6), nothrow, warn_unused_result))
 static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 	bool first, bool last, void *cbargs) {
 	exec_pipelinecb_t *args = (exec_pipelinecb_t *) cbargs;
@@ -326,16 +338,12 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 
 	/*cb ();*/
 	if (first && ! last && input == STDIN_FILENO) { /* first command */
-		if (r_dup2 (wr, STDOUT_FILENO) != 0)
-			return -1;
+		error_check (r_dup2 (wr, STDOUT_FILENO) != 0)    return -1;
 	} else if (! first && ! last && input != STDIN_FILENO) { /* middle command */
-		if (r_dup2 (input, STDIN_FILENO) != 0)
-			return -2;
-		if (r_dup2 (wr, STDOUT_FILENO) != 0)
-			return -3;
+		error_check (r_dup2 (input, STDIN_FILENO) != 0)  return -2;
+		error_check (r_dup2 (wr,    STDOUT_FILENO) != 0) return -3;
 	} else {/* last command */
-		if (r_dup2 (input, STDIN_FILENO) != 0)
-			return -4;
+		error_check (r_dup2 (input, STDIN_FILENO) != 0)  return -4;
 	}
 
 	execvp (argv[0], argv); /* returns -1 */
@@ -343,12 +351,13 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 	/*return closure->cb (closure->arg);*/
 }
 
+__attribute__ ((nonnull (1), nothrow, warn_unused_result))
 int exec_pipeline (char *const *const *argvs, size_t nargv) {
 	pipeline_t *cmds = malloc (nargv * sizeof (pipeline_t)
 	+ nargv * sizeof (exec_pipelinecb_t));
 	exec_pipelinecb_t *tmps;
 	size_t i;
-	if (cmds == NULL) return -1;
+	error_check (cmds == NULL) return -1;
 	tmps = (exec_pipelinecb_t *) (cmds + nargv);
 	for (i = 0; i != nargv; i++) {
 		cmds[i].cb = exec_pipelinecb;
@@ -356,7 +365,7 @@ int exec_pipeline (char *const *const *argvs, size_t nargv) {
 		tmps[i].argv = argvs[i];
 	}
 	/*puts ("exec_pipeline ()");*/
-	if (pipeline (cmds, nargv) != 0) {
+	error_check (pipeline (cmds, nargv) != 0) {
 		/*puts ("exec_pipeline failed");*/
 		free (cmds);
 		return -2;
