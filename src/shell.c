@@ -28,7 +28,7 @@ static int ezfork_parentcb_wait (pid_t cpid, void *unused) {
 }
 
 __attribute__ ((nonnull (1), warn_unused_result))
-int fork_and_wait (int (*cb) (void *), void *cb_args) {
+int fork_and_wait (stdcb_t cb, void *cb_args) {
 	/*puts ("fork_and_wait ()");*/
 	return ezfork (cb, cb_args, ezfork_parentcb_wait, NULL);
 }
@@ -65,8 +65,8 @@ static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
 
 __attribute__ ((nonnull (1, 3), warn_unused_result))
 int fork_and_wait2 (
-	int (*childcb)  (void *), void *childcb_args,
-	int (*parentcb) (void *), void *parentcb_args) {
+	stdcb_t childcb,  void *childcb_args,
+	stdcb_t parentcb, void *parentcb_args) {
 	parentcb_t cb;
 
 	/*puts ("fork_and_wait2 ()");*/
@@ -90,7 +90,7 @@ static int do_nothing (pid_t cpid, void *unused) {
 }
 
 __attribute__ ((nonnull (1), warn_unused_result))
-int zombify (int (*childcb)  (void *), void *childcb_args) {
+int zombify (stdcb_t childcb, void *childcb_args) {
 	/* insert joke about neglecting children */
 	/*puts ("zombify ()");*/
 	error_check (ezfork (childcb, childcb_args, do_nothing, NULL) != 0) {
@@ -125,7 +125,7 @@ static int backgroundcb (void *args) {
 */
 
 __attribute__ ((nonnull (1), warn_unused_result))
-int background (int (*cb) (void *), void *args) {
+int background (stdcb_t cb, void *args) {
 	closure_t tmp;
 	tmp.cb = cb;
 	tmp.arg = args;
@@ -234,7 +234,10 @@ typedef struct {
 } command_t;*/
 
 __attribute__ ((nonnull (1), warn_unused_result))
-static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
+static int command (
+	pipeline_t *restrict cmd,
+	fd_t *restrict input,
+	bool first, bool last) {
 	childcommon_t cargs;
 	parentcb2_t pargs;
 
@@ -365,7 +368,7 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 }
 
 __attribute__ ((nonnull (1), nothrow, warn_unused_result))
-int exec_pipeline (char *const *const *restrict argvs, size_t nargv) {
+int exec_pipeline (char *const *const argvs[], size_t nargv) {
 	pipeline_t *restrict cmds = malloc (nargv * sizeof (pipeline_t)
 	+ nargv * sizeof (exec_pipelinecb_t));
 	exec_pipelinecb_t *restrict tmps;

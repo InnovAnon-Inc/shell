@@ -12,7 +12,7 @@ extern "C" {
 /* exec_pipeline, exec_ring */
 
 int exec_pipeline (
-	char *const *const *restrict argvs,
+	char *const *const argvs[],
 	size_t nargv)
 __attribute__ ((nonnull (1), nothrow, warn_unused_result)) ;
 
@@ -22,8 +22,11 @@ __attribute__ ((nonnull (1), nothrow, warn_unused_result)) ;
 
 typedef int fd_t;
 
+typedef __attribute__ ((warn_unused_result))
+int (*pipelinecb_t) (fd_t, fd_t, fd_t, bool, bool, void *) ;
+
 typedef struct {
-	int (*cb) (fd_t, fd_t, fd_t, bool, bool, void *);
+	pipelinecb_t cb;
 	void *arg;
 	pid_t cpid;
 } pipeline_t;
@@ -39,14 +42,14 @@ __attribute__ ((const, warn_unused_result)) ;
 /* fork a process
  * child invokes cb (args)
  * parent does nothing, creating a zombie */
-int zombify (int (*cb) (void *), void *args)
+int zombify (stdcb_t cb, void *args)
 __attribute__ ((nonnull (1), warn_unused_result)) ;
 
 /* fork a process, then fork a process
  * grandchild invokes cb (args)
  * child does nothing, but dies, so grandchild is adopted by the init orphanage
  * parent waits for child to die */
-int background (int (*cb) (void *), void *args)
+int background (stdcb_t cb, void *args)
 __attribute__ ((nonnull (1), warn_unused_result)) ;
 
 /* ---------- */
@@ -54,15 +57,15 @@ __attribute__ ((nonnull (1), warn_unused_result)) ;
 /* fork a process
  * child invokes cb (args)
  * parent waits for child */
-int fork_and_wait (int (*cb) (void *), void *cb_args)
+int fork_and_wait (stdcb_t cb, void *cb_args)
 __attribute__ ((nonnull (1), warn_unused_result)) ;
 
 /* fork a process
  * child invokes childcb (childargs)
  * parent invokes parencb (parenargs), then waits for child */
 int fork_and_wait2 (
-	int (*childcb)  (void *), void *childcb_args,
-	int (*parentcb) (void *), void *parentcb_args)
+	stdcb_t childcb,  void *childcb_args,
+	stdcb_t parentcb, void *parentcb_args)
 __attribute__ ((nonnull (1, 3), warn_unused_result)) ;
 
 #ifdef __cplusplus
