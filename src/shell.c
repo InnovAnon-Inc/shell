@@ -242,7 +242,7 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 	fd_t pipettes[2];
 
 	/* TODO */
-	if (pipe (pipettes) != 0)
+	error_check (pipe (pipettes) != 0)
 		return -1;
 
 	cargs.first = first;
@@ -262,8 +262,8 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 
 	error_check (ezfork (childcommon, &cargs, parentcb, &pargs) != 0) {
 		/*puts ("command failed");*/
-		swallow (r_close (pipettes[0]), "-Werror=unused-result");
-		swallow (r_close (pipettes[1]), "-Werror=unused-result");
+		swallow (r_close (pipettes[0]), -Wunused-result);
+		swallow (r_close (pipettes[1]), -Wunused-result);
 		return -2;
 	}
 	cmd->cpid = pargs.cpid;
