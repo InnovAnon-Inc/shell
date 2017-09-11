@@ -1,8 +1,11 @@
-#include <stdlib.h>
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <stdio.h>
+#include <stdlib.h>
 
-#include "shell.h"
+#include <shell.h>
 
 static int puts2 (const char *const str) {
 	if (puts (str) == EOF) return -1;

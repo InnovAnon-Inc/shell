@@ -1,3 +1,7 @@
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -5,7 +9,7 @@
 #include <ezfork.h>
 #include <restart.h>
 
-#include "shell.h"
+#include <shell.h>
 
 typedef struct {
 	int (*cb) (void *);
