@@ -224,11 +224,14 @@ typedef struct {
 	closure_t args;
 } command_t;*/
 
+#define DO_PRAGMA(x) _Pragma (#x)
+#define TODO(x) DO_PRAGMA(message ("TODO - " #x))
+
 #define swallow(E,D) do { \
-	_Pragma (diagnostic ("push")) \
-	_Pragma (diagnostic ("ignored" #D)) \
+	DO_PRAGMA (diagnostic ("push")) \
+	DO_PRAGMA (diagnostic ("ignored" #D)) \
 	(void) (E); \
-	_Pragma (diagnostic ("pop")) \
+	DO_PRAGMA (diagnostic ("pop")) \
 } while (false) ;
 
 __attribute__ ((nonnull (1), warn_unused_result))
