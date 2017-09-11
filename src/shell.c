@@ -252,8 +252,8 @@ static int command (pipeline_t *cmd, fd_t *input, bool first, bool last) {
 
 	error_check (ezfork (childcommon, &cargs, parentcb, &pargs) != 0) {
 		/*puts ("command failed");*/
-		r_close (pipettes[0]);
-		r_close (pipettes[1]);
+		(void) r_close (pipettes[0]);
+		(void) r_close (pipettes[1]);
 		return -2;
 	}
 	cmd->cpid = pargs.cpid;
