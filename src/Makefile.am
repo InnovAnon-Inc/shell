@@ -1,8 +1,9 @@
 lib_LTLIBRARIES = libshell.la
 libshell_la_SOURCES = shell.c
-include_HEADERS	= shell.h
+include_HEADERS = shell.h
 #libshell_la_CFLAGS =
-libshell_la_LDFLAGS = -lezfork -lrestart
+#libshell_la_LDFLAGS = -lezfork -lrestart
+libshell_la_LIBADD = -lezfork -lrestart
 
 bin_PROGRAMS = shell-test
 shell_test_SOURCES = main.c
