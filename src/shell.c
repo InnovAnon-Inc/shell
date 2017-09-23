@@ -324,6 +324,7 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 	error_check (command (cmds + i, &input, first, true) != 0)
 	#pragma GCC diagnostic pop
 		return -2;
+	#pragma GCC ivdep
 	for (i = 0; i != ncmd; i++) {
 		pid_t cpid = cmds[i].cpid;
 		pid_t wpid;
@@ -396,6 +397,7 @@ int exec_pipeline (char *const *const argvs[], size_t nargv) {
 	#pragma GCC diagnostic error "-Wstrict-aliasing"
 	tmps = (exec_pipelinecb_t *restrict) (cmds + nargv);
 	#pragma GCC diagnostic pop
+	#pragma GCC ivdep
 	for (i = 0; i != nargv; i++) {
 		cmds[i].cb = exec_pipelinecb;
 		cmds[i].arg = tmps + i;
