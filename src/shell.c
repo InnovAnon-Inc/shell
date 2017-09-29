@@ -17,7 +17,7 @@ typedef struct {
 } closure_t;
 
 __attribute__ ((nothrow, warn_unused_result))
-static int ezfork_parentcb_wait (pid_t cpid, void *unused) {
+static int ezfork_parentcb_wait (pid_t cpid, void const *restrict unused) {
 	pid_t wpid;
 	int status;
 
@@ -32,7 +32,7 @@ static int ezfork_parentcb_wait (pid_t cpid, void *unused) {
 }
 
 __attribute__ ((nonnull (1), warn_unused_result))
-int fork_and_wait (stdcb_t cb, void *cb_args) {
+int fork_and_wait (stdcb_t cb, void *restrict cb_args) {
 	/*puts ("fork_and_wait ()");*/
 	return ezfork (cb, cb_args, ezfork_parentcb_wait, NULL);
 }
@@ -40,10 +40,10 @@ int fork_and_wait (stdcb_t cb, void *cb_args) {
 typedef closure_t parentcb_t;
 
 __attribute__ ((nonnull (2), nothrow, warn_unused_result))
-static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
+static int ezfork_parentcb_wait2 (pid_t cpid, void const *restrict args) {
 	pid_t wpid;
 	int status;
-	parentcb_t *cb = (parentcb_t *) args;
+	parentcb_t const *restrict cb = (parentcb_t const *restrict) args;
 
 	/*puts ("ezfork_parentcb_wait2 ()");*/
 
@@ -69,8 +69,8 @@ static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
 
 __attribute__ ((nonnull (1, 3), warn_unused_result))
 int fork_and_wait2 (
-	stdcb_t childcb,  void *childcb_args,
-	stdcb_t parentcb, void *parentcb_args) {
+	stdcb_t childcb,  void *restrict childcb_args,
+	stdcb_t parentcb, void *restrict parentcb_args) {
 	parentcb_t cb;
 
 	/*puts ("fork_and_wait2 ()");*/
@@ -88,13 +88,13 @@ int fork_and_wait2 (
 }
 
 __attribute__ ((const, nothrow, warn_unused_result))
-static int do_nothing (pid_t cpid, void *unused) {
+static int do_nothing (pid_t cpid, void const *restrict unused) {
 	/*puts ("do_nothing ()");*/
 	return 0;
 }
 
 __attribute__ ((nonnull (1), warn_unused_result))
-int zombify (stdcb_t childcb, void *childcb_args) {
+int zombify (stdcb_t childcb, void *restrict childcb_args) {
 	/* insert joke about neglecting children */
 	/*puts ("zombify ()");*/
 	error_check (ezfork (childcb, childcb_args, do_nothing, NULL) != 0) {
@@ -106,8 +106,8 @@ int zombify (stdcb_t childcb, void *childcb_args) {
 }
 
 __attribute__ ((nonnull (1), warn_unused_result))
-static int zombify_wrapper (void *arg) {
-	closure_t *closure = (closure_t *) arg;
+static int zombify_wrapper (void const *restrict arg) {
+	closure_t const *restrict closure = (closure_t const *restrict) arg;
 	/*puts ("zombify_wrapper ()");*/
 	error_check (zombify (closure->cb, closure->arg) != 0) {
 		/*puts ("zombify_wrapper error");*/
@@ -129,7 +129,7 @@ static int backgroundcb (void *args) {
 */
 
 __attribute__ ((nonnull (1), warn_unused_result))
-int background (stdcb_t cb, void *args) {
+int background (stdcb_t cb, void *restrict args) {
 	closure_t tmp;
 	tmp.cb = cb;
 	tmp.arg = args;
@@ -157,8 +157,8 @@ typedef struct {
 	#pragma GCC diagnostic pop
 
 __attribute__ ((nonnull (2), nothrow, warn_unused_result))
-static int parentcb (pid_t cpid, void *cbargs) {
-	parentcb2_t *args = (parentcb2_t *) cbargs;
+static int parentcb (pid_t cpid, void const *restrict cbargs) {
+	parentcb2_t const *restrict args = (parentcb2_t const *restrict) cbargs;
 	fd_t input = args->input;
 	fd_t wr = args->wr;
 	fd_t rd = args->rd;
@@ -216,12 +216,12 @@ typedef struct {
 	#pragma GCC diagnostic pop
 
 __attribute__ ((nonnull (1), warn_unused_result))
-static int childcommon (void *tmp) {
-	childcommon_t *arg = (childcommon_t *) tmp;
+static int childcommon (void const *restrict tmp) {
+	childcommon_t const *restrict arg = (childcommon_t const *restrict) tmp;
 	fd_t input = arg->input;
 	fd_t rd = arg->rd;
 	fd_t wr = arg->wr;
-	pipeline_t *restrict cmd = arg->cmd;
+	pipeline_t const *restrict cmd = arg->cmd;
 	bool first = arg->first;
 	bool last = arg->last;
 	/*puts ("childcommon ()");
@@ -247,7 +247,7 @@ typedef struct {
 
 __attribute__ ((nonnull (1), warn_unused_result))
 static int command (
-	pipeline_t *restrict cmd,
+	pipeline_t const *restrict cmd,
 	fd_t *restrict input,
 	bool first, bool last) {
 	childcommon_t cargs;
@@ -302,7 +302,7 @@ TODO (add void * param to cmds siggy and void * arg... closure-style)
 
 /* nargv is non-zero */
 __attribute__ ((nonnull (1), warn_unused_result))
-int pipeline (pipeline_t cmds[], size_t ncmd) {
+int pipeline (pipeline_t const cmds[], size_t ncmd) {
 	fd_t input = STDIN_FILENO;
 	bool first = true;
 	size_t i;
@@ -360,8 +360,8 @@ typedef struct {
 
 __attribute__ ((nonnull (6), nothrow, warn_unused_result))
 static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
-	bool first, bool last, void *cbargs) {
-	exec_pipelinecb_t *args = (exec_pipelinecb_t *) cbargs;
+	bool first, bool last, void const *restrict cbargs) {
+	exec_pipelinecb_t const *restrict args = (exec_pipelinecb_t const *restrict) cbargs;
 	char *const *argv = args->argv;
 	/*puts ("exec_pipelinecb");*/
 	/*if (argv == NULL) puts ("a");
