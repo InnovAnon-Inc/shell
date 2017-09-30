@@ -386,14 +386,18 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 
 __attribute__ ((nonnull (1), nothrow, warn_unused_result))
 int exec_pipeline (char *const *const argvs[], size_t nargv) {
-	pipeline_t *restrict cmds = malloc (nargv * sizeof (pipeline_t)
-	+ nargv * sizeof (exec_pipelinecb_t));
+	void *restrict combined;
+	pipeline_t *restrict cmds;
 	exec_pipelinecb_t *restrict tmps;
 	size_t i;
+
+	combined = malloc (nargv * sizeof (pipeline_t)
+		+ nargv * sizeof (exec_pipelinecb_t));
 	error_check (cmds == NULL) return -1;
+	cmds = (pipeline_t *restrict) combined;
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic error "-Wstrict-aliasing"
-	tmps = (exec_pipelinecb_t *restrict) (cmds + nargv);
+	tmps = (exec_pipelinecb_t *restrict) ((pipeline_t *restrict) cmds + nargv);
 	#pragma GCC diagnostic pop
 	#pragma GCC ivdep
 	for (i = 0; i != nargv; i++) {
