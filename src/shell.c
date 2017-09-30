@@ -393,11 +393,11 @@ int exec_pipeline (char *const *const argvs[], size_t nargv) {
 
 	combined = malloc (nargv * sizeof (pipeline_t)
 		+ nargv * sizeof (exec_pipelinecb_t));
-	error_check (cmds == NULL) return -1;
+	error_check (combined == NULL) return -1;
 	cmds = (pipeline_t *restrict) combined;
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic error "-Wstrict-aliasing"
-	tmps = (exec_pipelinecb_t *restrict) ((pipeline_t *restrict) cmds + nargv);
+	tmps = (exec_pipelinecb_t *restrict) ((pipeline_t *restrict) combined + nargv);
 	#pragma GCC diagnostic pop
 	#pragma GCC ivdep
 	for (i = 0; i != nargv; i++) {
