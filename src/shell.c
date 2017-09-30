@@ -34,7 +34,7 @@ static int ezfork_parentcb_wait (pid_t cpid, void const *restrict unused) {
 __attribute__ ((nonnull (1), warn_unused_result))
 int fork_and_wait (stdcb_t cb, void *restrict cb_args) {
 	/*puts ("fork_and_wait ()");*/
-	return ezfork (cb, cb_args, (ezfork_parentcb_t) ezfork_parentcb_wait, NULL);
+	return ezfork (cb, cb_args, (parentcb_t) ezfork_parentcb_wait, NULL);
 }
 
 __attribute__ ((nonnull (2), nothrow, warn_unused_result))
@@ -77,7 +77,7 @@ int fork_and_wait2 (
 	cb.arg = parentcb_args;
 	error_check (ezfork (
 		childcb, childcb_args,
-		(ezfork_parentcb_t) ezfork_parentcb_wait2, (void *) &cb) != 0) {
+		(parentcb_t) ezfork_parentcb_wait2, (void *) &cb) != 0) {
 			/*puts ("fork_and_wait2 error");*/
 			return -1;
 		}
@@ -95,7 +95,7 @@ __attribute__ ((nonnull (1), warn_unused_result))
 int zombify (stdcb_t childcb, void *restrict childcb_args) {
 	/* insert joke about neglecting children */
 	/*puts ("zombify ()");*/
-	error_check (ezfork (childcb, childcb_args, do_nothing, NULL) != 0) {
+	error_check (ezfork (childcb, childcb_args, (parentcb_t) do_nothing, NULL) != 0) {
 		/*puts ("zombify error");*/
 		return -1;
 	}
@@ -132,7 +132,7 @@ int background (stdcb_t cb, void *restrict args) {
 	tmp.cb = cb;
 	tmp.arg = args;
 	/*puts ("background ()");*/
-	error_check (fork_and_wait (zombify_wrapper, &tmp) != 0) {
+	error_check (fork_and_wait ((stdcb_t) zombify_wrapper, &tmp) != 0) {
 		/*puts ("background error");*/
 		return -1;
 	}
@@ -155,8 +155,8 @@ typedef struct {
 	#pragma GCC diagnostic pop
 
 __attribute__ ((nonnull (2), nothrow, warn_unused_result))
-static int parentcb (pid_t cpid, void const *restrict cbargs) {
-	parentcb2_t const *restrict args = (parentcb2_t const *restrict) cbargs;
+static int parentcb (pid_t cpid, void *restrict cbargs) {
+	parentcb2_t *restrict args = (parentcb2_t *restrict) cbargs;
 	fd_t input = args->input;
 	fd_t wr = args->wr;
 	fd_t rd = args->rd;
@@ -271,7 +271,7 @@ static int command (
 	*input = pipettes[0];
 	/*puts ("command ()");*/
 
-	error_check (ezfork (childcommon, &cargs, (parentcb_t) parentcb, &pargs) != 0) {
+	error_check (ezfork ((childcb_t) childcommon, &cargs, (parentcb_t) parentcb, &pargs) != 0) {
 		/*puts ("command failed");*/
 		/*swallow (r_close (pipettes[0]), -Wunused-result);
 		swallow (r_close (pipettes[1]), -Wunused-result);*/
