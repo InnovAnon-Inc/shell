@@ -354,14 +354,14 @@ int ring (void) {
 
 
 typedef struct {
-	char *const restrict *restrict argv;
+	char *const *argv;
 } exec_pipelinecb_t;
 
 __attribute__ ((nonnull (6), nothrow, warn_unused_result))
 static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 	bool first, bool last, void const *restrict cbargs) {
 	exec_pipelinecb_t const *restrict args = (exec_pipelinecb_t const *restrict) cbargs;
-	char *const restrict *restrict argv = args->argv;
+	char *const *argv = args->argv;
 	/*puts ("exec_pipelinecb");*/
 	/*if (argv == NULL) puts ("a");
 	puts ("aa");
@@ -387,7 +387,7 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 
 __attribute__ ((nonnull (1), nothrow, warn_unused_result))
 int exec_pipeline (
-	char *const restrict *const restrict argvs[],
+	char *const *const argvs[],
 	size_t nargv) {
 	void *restrict combined[2];
 	size_t eszs[2];
