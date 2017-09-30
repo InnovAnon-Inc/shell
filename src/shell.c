@@ -34,7 +34,7 @@ static int ezfork_parentcb_wait (pid_t cpid, void const *restrict unused) {
 __attribute__ ((nonnull (1), warn_unused_result))
 int fork_and_wait (stdcb_t cb, void *restrict cb_args) {
 	/*puts ("fork_and_wait ()");*/
-	return ezfork (cb, cb_args, ezfork_parentcb_wait, NULL);
+	return ezfork (cb, cb_args, (ezfork_parentcb_t) ezfork_parentcb_wait, NULL);
 }
 
 __attribute__ ((nonnull (2), nothrow, warn_unused_result))
@@ -77,7 +77,7 @@ int fork_and_wait2 (
 	cb.arg = parentcb_args;
 	error_check (ezfork (
 		childcb, childcb_args,
-		ezfork_parentcb_wait2, (void *) &cb) != 0) {
+		(ezfork_parentcb_t) ezfork_parentcb_wait2, (void *) &cb) != 0) {
 			/*puts ("fork_and_wait2 error");*/
 			return -1;
 		}
@@ -245,7 +245,7 @@ typedef struct {
 
 __attribute__ ((nonnull (1), warn_unused_result))
 static int command (
-	pipeline_t const *restrict cmd,
+	pipeline_t *restrict cmd,
 	fd_t *restrict input,
 	bool first, bool last) {
 	childcommon_t cargs;
@@ -271,7 +271,7 @@ static int command (
 	*input = pipettes[0];
 	/*puts ("command ()");*/
 
-	error_check (ezfork (childcommon, &cargs, parentcb, &pargs) != 0) {
+	error_check (ezfork (childcommon, &cargs, (parentcb_t) parentcb, &pargs) != 0) {
 		/*puts ("command failed");*/
 		/*swallow (r_close (pipettes[0]), -Wunused-result);
 		swallow (r_close (pipettes[1]), -Wunused-result);*/
@@ -397,7 +397,7 @@ int exec_pipeline (char *const *const argvs[], size_t nargv) {
 	#pragma GCC diagnostic pop
 	#pragma GCC ivdep
 	for (i = 0; i != nargv; i++) {
-		cmds[i].cb = exec_pipelinecb;
+		cmds[i].cb = (pipelinecb_t) exec_pipelinecb;
 		cmds[i].arg = tmps + i;
 		tmps[i].argv = argvs[i];
 	}
