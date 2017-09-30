@@ -12,7 +12,7 @@ extern "C" {
 /* exec_pipeline, exec_ring */
 
 int exec_pipeline (
-	char *const *const argvs[],
+	char *const restrict *const restrict argvs[],
 	size_t nargv)
 __attribute__ ((nonnull (1), nothrow, warn_unused_result)) ;
 

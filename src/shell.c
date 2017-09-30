@@ -386,8 +386,10 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 }
 
 __attribute__ ((nonnull (1), nothrow, warn_unused_result))
-int exec_pipeline (char *const *const argvs[], size_t nargv) {
-	void *restrict combined[2];
+int exec_pipeline (
+	char *const restrict *const restrict argvs[],
+	size_t nargv) {
+	void const *restrict combined[2];
 	pipeline_t *restrict cmds;
 	exec_pipelinecb_t *restrict tmps;
 	size_t i;
@@ -395,7 +397,7 @@ int exec_pipeline (char *const *const argvs[], size_t nargv) {
 
 	eszs[0] = nargv * sizeof (pipeline_t);
 	eszs[1] = nargv * sizeof (exec_pipelinecb_t);
-	error_check (mmalloc ((void const *restrict *restrict)combined, eszs, eszs[0] + eszs[1], ARRSZ (eszs)) != 0)
+	error_check (mmalloc (combined, eszs, eszs[0] + eszs[1], ARRSZ (eszs)) != 0)
 		return -1;
 	cmds = combined[0];
 	tmps = combined[1];
