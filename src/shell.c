@@ -395,7 +395,7 @@ int exec_pipeline (char *const *const argvs[], size_t nargv) {
 
 	eszs[0] = nargv * sizeof (pipeline_t);
 	eszs[1] = nargv * sizeof (exec_pipelinecb_t);
-	error_check (mmalloc (combined, eszs, eszs[0] + eszs[1], 2) != 0)
+	error_check (mmalloc ((void const *restrict *restrict)combined, eszs, eszs[0] + eszs[1], ARRSZ (eszs)) != 0)
 		return -1;
 	cmds = combined[0];
 	tmps = combined[1];
