@@ -37,13 +37,11 @@ int fork_and_wait (stdcb_t cb, void *restrict cb_args) {
 	return ezfork (cb, cb_args, ezfork_parentcb_wait, NULL);
 }
 
-typedef closure_t parentcb_t;
-
 __attribute__ ((nonnull (2), nothrow, warn_unused_result))
 static int ezfork_parentcb_wait2 (pid_t cpid, void const *restrict args) {
 	pid_t wpid;
 	int status;
-	parentcb_t const *restrict cb = (parentcb_t const *restrict) args;
+	closure_t const *restrict cb = (closure_t const *restrict) args;
 
 	/*puts ("ezfork_parentcb_wait2 ()");*/
 
@@ -71,7 +69,7 @@ __attribute__ ((nonnull (1, 3), warn_unused_result))
 int fork_and_wait2 (
 	stdcb_t childcb,  void *restrict childcb_args,
 	stdcb_t parentcb, void *restrict parentcb_args) {
-	parentcb_t cb;
+	closure_t cb;
 
 	/*puts ("fork_and_wait2 ()");*/
 
