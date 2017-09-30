@@ -1,16 +1,24 @@
+LIBSHELL_LIBADD  = ../ezfork/src/.libs/libezfork.la $(LIBEZFORK_LIBADD)
+LIBSHELL_LIBADD += ../restart/src/.libs/librestart.la $(LIBRESTART_LIBADD)
+LIBSHELL_LIBADD += ../MultiMalloc/src/.libs/libmmalloc.la $(LIBMMALLOC_LIBADD)
+
 lib_LTLIBRARIES = libshell.la
-libshell_la_SOURCES = shell.c
 include_HEADERS = shell.h
-#libshell_la_CFLAGS =
-libshell_la_LIBADD = -lezfork -lrestart -lmmalloc
+libshell_la_LIBADD = $(LIBSHELL_LIBADD)
 
 bin_PROGRAMS = shell-test
-shell_test_SOURCES = main.c
-shell_test_LDADD = libshell.la -lezfork -lrestart -lmmalloc
-#shell_test_CFLAGS =
+shell_test_LDADD = libshell.la $(LIBSHELL_LIBADD)
 
 AM_CPPFLAGS = -D__STDC_INT64__
-AM_CPPFLAGS += -I $(srcdir)/../glitter/src
-AM_CPPFLAGS += -I $(srcdir)/../restart/src
-AM_CPPFLAGS += -I $(srcdir)/../ezfork/src
-AM_CPPFLAGS += -I $(srcdir)/../MultiMalloc/src
+
+SUBDIRS = ../glitter
+AM_CPPFLAGS += -I ../glitter/src
+
+SUBDIRS += ../restart
+AM_CPPFLAGS += -I ../restart/src
+
+SUBDIRS += ../ezfork
+AM_CPPFLAGS += -I ../ezfork/src
+
+SUBDIRS += ../MultiMalloc
+AM_CPPFLAGS += -I ../MultiMalloc/src
