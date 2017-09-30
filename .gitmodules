@@ -10,3 +10,6 @@
 [submodule "glitter"]
 	path = glitter
 	url = https://github.com/InnovAnon-Inc/glitter.git
+[submodule "MultiMalloc"]
+	path = MultiMalloc
+	url = https://github.com/InnovAnon-Inc/MultiMalloc.git

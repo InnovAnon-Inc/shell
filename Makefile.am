@@ -1,4 +1,4 @@
-SUBDIRS = glitter restart ezfork MMalloc src
+SUBDIRS = glitter restart ezfork MultiMalloc src
 dist_doc_DATA = README.md
 ACLOCAL_AMFLAGS = -I m4
 
