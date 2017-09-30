@@ -386,19 +386,27 @@ static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 
 __attribute__ ((nonnull (1), nothrow, warn_unused_result))
 int exec_pipeline (char *const *const argvs[], size_t nargv) {
-	void *restrict combined;
+	void *restrict combined[2];
 	pipeline_t *restrict cmds;
 	exec_pipelinecb_t *restrict tmps;
 	size_t i;
+	size_t eszs[2];
 
-	combined = malloc (nargv * sizeof (pipeline_t)
+	eszs[0] = nargv * sizeof (pipeline_t);
+	eszs[1] = nargv * sizeof (exec_pipelinecb_t);
+	error_check (mmalloc (combined, eszs, eszs[0] + eszs[1], 2) != 0)
+		return -1;
+	cmds = combined[0];
+	tmps = combined[1];
+
+	/*combined = malloc (nargv * sizeof (pipeline_t)
 		+ nargv * sizeof (exec_pipelinecb_t));
 	error_check (combined == NULL) return -1;
 	cmds = (pipeline_t *restrict) combined;
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic error "-Wstrict-aliasing"
 	tmps = (exec_pipelinecb_t *restrict) ((pipeline_t *restrict) combined + nargv);
-	#pragma GCC diagnostic pop
+	#pragma GCC diagnostic pop*/
 	#pragma GCC ivdep
 	for (i = 0; i != nargv; i++) {
 		cmds[i].cb = (pipelinecb_t) exec_pipelinecb;
@@ -412,6 +420,7 @@ int exec_pipeline (char *const *const argvs[], size_t nargv) {
 		return -2;
 	}
 	/*puts ("exec_pipeline success");*/
-	free (cmds);
+	/*free (cmds);*/
+	free (*combined);
 	return 0;
 }
