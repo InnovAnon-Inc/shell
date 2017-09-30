@@ -361,7 +361,7 @@ __attribute__ ((nonnull (6), nothrow, warn_unused_result))
 static int exec_pipelinecb (fd_t input, fd_t rd, fd_t wr,
 	bool first, bool last, void const *restrict cbargs) {
 	exec_pipelinecb_t const *restrict args = (exec_pipelinecb_t const *restrict) cbargs;
-	char *const *argv = args->argv;
+	char *const restrict *restrict argv = args->argv;
 	/*puts ("exec_pipelinecb");*/
 	/*if (argv == NULL) puts ("a");
 	puts ("aa");
