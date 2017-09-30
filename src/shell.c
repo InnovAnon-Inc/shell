@@ -116,7 +116,7 @@ static int zombify_wrapper (void const *restrict arg) {
 	return 0;
 }
 
-typedef closure_t background_t;
+/*typedef closure_t background_t;*/
 
 /* typedef apply_closure_t; ==> closure with a closure in it */
 
@@ -354,7 +354,7 @@ int ring (void) {
 
 
 typedef struct {
-	char *const *argv;
+	char *const restrict *restrict argv;
 } exec_pipelinecb_t;
 
 __attribute__ ((nonnull (6), nothrow, warn_unused_result))
@@ -389,18 +389,19 @@ __attribute__ ((nonnull (1), nothrow, warn_unused_result))
 int exec_pipeline (
 	char *const restrict *const restrict argvs[],
 	size_t nargv) {
-	void const *restrict combined[2];
+	void *restrict combined[2];
+	size_t eszs[2];
 	pipeline_t *restrict cmds;
 	exec_pipelinecb_t *restrict tmps;
 	size_t i;
-	size_t eszs[2];
 
 	eszs[0] = nargv * sizeof (pipeline_t);
 	eszs[1] = nargv * sizeof (exec_pipelinecb_t);
-	error_check (mmalloc (combined, eszs, eszs[0] + eszs[1], ARRSZ (eszs)) != 0)
+	error_check (mmalloc (combined, eszs,
+		eszs[0] + eszs[1], ARRSZ (eszs)) != 0)
 		return -1;
-	cmds = combined[0];
-	tmps = combined[1];
+	cmds = (pipeline_t         *restrict) combined[0];
+	tmps = (exec_pipelinecb_t *restrict) combined[1];
 
 	/*combined = malloc (nargv * sizeof (pipeline_t)
 		+ nargv * sizeof (exec_pipelinecb_t));
