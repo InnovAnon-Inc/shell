@@ -300,7 +300,7 @@ TODO (add void * param to cmds siggy and void * arg... closure-style)
 
 /* nargv is non-zero */
 __attribute__ ((nonnull (1), warn_unused_result))
-int pipeline (pipeline_t const cmds[], size_t ncmd) {
+int pipeline (pipeline_t cmds[], size_t ncmd) {
 	fd_t input = STDIN_FILENO;
 	bool first = true;
 	size_t i;

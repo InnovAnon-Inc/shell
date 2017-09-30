@@ -32,7 +32,7 @@ typedef struct {
 } pipeline_t;
 	#pragma GCC diagnostic pop
 
-int pipeline (pipeline_t const cmds[], size_t ncmd)
+int pipeline (pipeline_t cmds[], size_t ncmd)
 __attribute__ ((nonnull (1), warn_unused_result)) ;
 
 int ring (void)
