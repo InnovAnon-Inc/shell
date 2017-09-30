@@ -8,6 +8,7 @@
 
 #include <ezfork.h>
 #include <restart.h>
+#include <mmalloc.h>
 
 #include <shell.h>
 
