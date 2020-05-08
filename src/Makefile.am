@@ -1,18 +1,18 @@
 AM_CPPFLAGS = -D__STDC_INT64__
 
-if USE_SUBMODULES
-SUBDIRS = ../glitter
-AM_CPPFLAGS += -I $(top_srcdir)/glitter/src
-
-SUBDIRS += ../restart
-AM_CPPFLAGS += -I $(top_srcdir)/restart/src
-
-SUBDIRS += ../ezfork
-AM_CPPFLAGS += -I $(top_srcdir)/ezfork/src
-
-SUBDIRS += ../MultiMalloc
-AM_CPPFLAGS += -I $(top_srcdir)/MultiMalloc/src
-endif
+#if USE_SUBMODULES
+#SUBDIRS = ../glitter
+#AM_CPPFLAGS += -I $(top_srcdir)/glitter/src
+#
+#SUBDIRS += ../restart
+#AM_CPPFLAGS += -I $(top_srcdir)/restart/src
+#
+#SUBDIRS += ../ezfork
+#AM_CPPFLAGS += -I $(top_srcdir)/ezfork/src
+#
+#SUBDIRS += ../MultiMalloc
+#AM_CPPFLAGS += -I $(top_srcdir)/MultiMalloc/src
+#endif
 
 include Makefile-LIBADD.inc
 
