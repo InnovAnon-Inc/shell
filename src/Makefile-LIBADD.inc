@@ -1,6 +1,6 @@
-include $(top_srcdir)/ezfork/src/Makefile-LIBADD.inc
-include $(top_srcdir)/restart/src/Makefile-LIBADD.inc
-include $(top_srcdir)/MultiMalloc/src/Makefile-LIBADD.inc
+#include $(top_srcdir)/ezfork/src/Makefile-LIBADD.inc
+#include $(top_srcdir)/restart/src/Makefile-LIBADD.inc
+#include $(top_srcdir)/MultiMalloc/src/Makefile-LIBADD.inc
 
 #if USE_SUBMODULES
 #LIBSHELL_LIBADD  = ../ezfork/src/.libs/libezfork.la $(LIBEZFORK_LIBADD)
