@@ -15,7 +15,7 @@ AC_ARG_ENABLE([use-submodules],
 AM_CONDITIONAL([USE_SUBMODULES], [test x"$enable_use_submodules" = "xyes"])
 
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_SUBDIRS([glitter restart ezfork MultiMalloc])
+#AC_CONFIG_SUBDIRS([glitter restart ezfork MultiMalloc])
 
 AC_CHECK_HEADERS([stdlib.h unistd.h sys/types.h sys/wait.h])
 AC_CHECK_HEADERS([ezfork.h glitter.h restart.h mmalloc.h])
