@@ -24,6 +24,12 @@ AC_CHECK_LIB([ezfork],[ezfork])
 AC_CHECK_LIB([restart],[r_waitpid,r_close,r_dup2])
 AC_CHECK_LIB([mmalloc],[mmalloc])
 
+LIBSHELL_LIBADD="`PATH=src:$PATH libshell_config --libs`"
+AC_SUBST(LIBSHELL_LIBADD)
+
+SHELL_TEST_LIBADD="libshell.la `PATH=src:$PATH shell_test_config --libs`"
+AC_SUBST(SHELL_TEST_LIBADD)
+
 INNOVANON_WARNINGS([])
 
 AC_OUTPUT
