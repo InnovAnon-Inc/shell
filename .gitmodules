@@ -4,6 +4,3 @@
 [submodule "restart"]
 	path = restart
 	url = https://github.com/InnovAnon-Inc/restart.git
-[submodule "ezfork"]
-	path = ezfork
-	url = https://github.com/InnovAnon-Inc/ezfork.git
