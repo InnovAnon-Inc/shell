@@ -7,6 +7,3 @@
 [submodule "ezfork"]
 	path = ezfork
 	url = https://github.com/InnovAnon-Inc/ezfork.git
-[submodule "glitter"]
-	path = glitter
-	url = https://github.com/InnovAnon-Inc/glitter.git
