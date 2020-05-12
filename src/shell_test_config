@@ -2,5 +2,6 @@
 set -eu
 [ $# -eq 1 ]
 [ $1 == --libs ]
-libshell_config --libs
+#libshell_config --libs
+echo -lshell `libshell_config --libs`
 
