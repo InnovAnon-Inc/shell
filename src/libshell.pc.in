@@ -1,0 +1,15 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+#shell_utility=shell-test
+
+Name: @PACKAGE_NAME@
+Description: shell library
+Version: @PACKAGE_VERSION@
+Libs: -L${libdir} -lshell
+Cflags: -I${includedir}
+Requires: glitter
+Requires.private: libmmalloc librestart libezfork
+
