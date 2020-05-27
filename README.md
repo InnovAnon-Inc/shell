@@ -3,13 +3,14 @@ Library for Shells;
 defines semantics for Shell language primitives:
 just add a parser
 ==========
+
 Back-end/library for command Shells
 
 Defines/implements the semantics for Shell language primitives:
 
 Just add a parser/front-end!
-
 -----
+
 This will provide a starting point for:
 
 - ThrEll (Thread Shell): lighter-weight command shell
@@ -23,8 +24,8 @@ This will provide a starting point for:
   - Speech-to-text with a custom model file,
     optimized for structured languages and special characters,
     especially C
-
 -----
+
 [![CircleCI](https://img.shields.io/circleci/build/github/InnovAnon-Inc/shell?color=%23FF1100&logo=InnovAnon%2C%20Inc.&logoColor=%23FF1133&style=plastic)](https://circleci.com/gh/InnovAnon-Inc/shell)
 [![Repo Size](https://img.shields.io/github/repo-size/InnovAnon-Inc/shell?color=%23FF1100&logo=InnovAnon%2C%20Inc.&logoColor=%23FF1133&style=plastic)](https://github.com/InnovAnon-Inc/shell)
 [![LoC](https://tokei.rs/b1/github/InnovAnon-Inc/shell?category=code)](https://github.com/InnovAnon-Inc/shell)
